@@ -974,7 +974,7 @@
       if (biggestSide[1] == "width") {
         this.$el.css("left", biggestSide[0].position.x).css("top", 0).css("height", Screen.dimension.height).css("width", biggestSide[0].dimension.width);
       } else {
-        this.$el.css("left", 0).css("top", biggestSide[0].position.y).css("height", biggestSide[0].dimension.height).css("width", Screen.dimension.width);
+        this.$el.css("left", 0).css("top", biggestSide[0].position.y).css("height", biggestSide[0].dimension.height * .9).css("width", Screen.dimension.width);
       }
 
       this.dimension = {
@@ -1367,9 +1367,10 @@
     StepDescription.method("render", function () {
       this.$el = $("<div>").addClass("sideshow-step-description").addClass("sideshow-hidden").addClass("sideshow-invisible");
 
-      var stepPosition = $("<span>").addClass("sideshow-step-position");
-      this.$el.append(stepPosition);
-      if (currentWizard.showStepPosition === false) stepPosition.hide();
+      // Remove the step position (don't want to frighten anyone with the number of steps)
+      //var stepPosition = $("<span>").addClass("sideshow-step-position");
+      //this.$el.append(stepPosition);
+      //if (currentWizard.showStepPosition === false) stepPosition.hide();
 
       this.$el.append($("<h2>"));
       this.$el.append($("<div>").addClass("sideshow-step-text"));
@@ -2427,11 +2428,15 @@
       var somethingNew = false;
       for (var w = 0; w < wizards.length; w++) {
         var wiz = wizards[w];
+        console.log('wiz')
+        console.log(wiz.isEligible())
         if (wiz.isEligible()) {
           if (!wiz.isAlreadyWatched()) somethingNew = true;
           eligibleWizards.push(wiz);
         }
       }
+      console.log('eligibleWizards')
+      console.log(wizards)
 
       return !onlyNew || somethingNew ? eligibleWizards : [];
     };
