@@ -759,7 +759,7 @@
         //Step Description is shown, but is transparent yet (since we need to know its dimension to positionate it properly)
         description.show(true);
         if (!Mask.CompositeMask.singleInstance.scrollIfNecessary(Subject.position, Subject.dimension)) {
-          description.positionate();
+          description.positionate(step.showDescriptionOnTop);
           //Do a simple fade in for the description box
           description.fadeIn();
         }
@@ -1396,7 +1396,7 @@
      
      @method positionate
      **/
-    StepDescription.method("positionate", function () {
+    StepDescription.method("positionate", function (forceToTop) {
       var dp = DetailsPanel.singleInstance;
 
       if (dp.dimension.width >= 900) this.dimension.width = 900;
@@ -1416,10 +1416,20 @@
         this.dimension.height = parsePxValue(this.$el.outerHeight());
 
         this.position.x = ($window.width() - this.dimension.width) / 2;
-        this.position.y = ($window.height() - this.dimension.height) / 2;
+        if (forceToTop) {
+          this.position.y = ($window.height() - this.dimension.height) * 0.1;
+        }
+        else {
+          this.position.y = ($window.height() - this.dimension.height) * 0.9;
+        }
       } else {
         this.position.x = (dp.dimension.width - this.dimension.width) / 2;
-        this.position.y = (dp.dimension.height - this.dimension.height) / 2;
+        if (forceToTop) {
+          this.position.y = (dp.dimension.height - this.dimension.height) * 0.1;
+        }
+        else {
+          this.position.y = (dp.dimension.height - this.dimension.height) * 0.9;
+        }
       }
 
       this.$el.css("left", this.position.x - paddingLeftRight);
@@ -2428,15 +2438,11 @@
       var somethingNew = false;
       for (var w = 0; w < wizards.length; w++) {
         var wiz = wizards[w];
-        console.log('wiz')
-        console.log(wiz.isEligible())
         if (wiz.isEligible()) {
           if (!wiz.isAlreadyWatched()) somethingNew = true;
           eligibleWizards.push(wiz);
         }
       }
-      console.log('eligibleWizards')
-      console.log(wizards)
 
       return !onlyNew || somethingNew ? eligibleWizards : [];
     };
@@ -2535,8 +2541,9 @@
         }
         else SS.showWizardsList(onlyNew);
 
-        this.CloseButton.singleInstance.render();
-        this.CloseButton.singleInstance.fadeIn();
+        // Remove the close button to force user to ESC to close tour
+        //this.CloseButton.singleInstance.render();
+        //this.CloseButton.singleInstance.fadeIn();
 
         registerInnerHotkeys();
         flags.running = true;
